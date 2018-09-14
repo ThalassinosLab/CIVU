@@ -1,4 +1,4 @@
-adc_blac_8_trapCE_combined	5V	15V	25V	35V	45V
+Demo_data_4	5V	15V	25V	35V	45V
 15.252	0	0	0	0	0
 15.498	0	0	0	0	0
 15.744	0	0	0	0	0

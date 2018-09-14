@@ -129,18 +129,21 @@ def main():
     #Start timer to measure time to completion
     start_time = time.time()
     #Input filename of data file here without file extension
-    filename = 'adc_blac_8_spinning_combined'
-    title = 'blac_8_spin_demo'
+    filename = 'Demo_data_3'
+    title = '_demo'
     #Identifier for result file
-    res_filename = '_3_2'
+    res_filename = '_smoothed_3_2'
     #Moving average smoothing in format: [window size, interval]. No smoothing 
     #if left empty
     smooth = [3, 2]
-    xticks = [0, 120, 240, 360] #Ticks for data on the area under the curve plot.
+    #Ticks for data on the area under the curve plot. Should correspond to the
+    #voltages of the ATDs in the dataset.
+    xticks = [0, 120, 240, 360] 
     #Mode of mean determination: 'der' for second derivative, 'rel_max' for 
     #relative maxima, [int, ..., int] for indices, [float, ..., float] for 
     #numerical
     means = 'der'
+    #If analysing a CIU dataset change ciu to True and aline to False.
     deconvolve(filename, res_filename, smooth, means, title, xticks, ciu=False, 
         cycles=5, aline=True)
     print time.time() - start_time
