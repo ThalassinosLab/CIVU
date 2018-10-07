@@ -9,11 +9,11 @@ The package's main function is to produce plots of the deconvoluted data, as wel
 
 A CIU assay produces a heatmap with voltage on the x-axis, arrival time on the y-axis and intensity as heat. An example can be seen below:
 
-![](https://github.com/simoskalfas/CIVU/blob/master/Images/Heatmap.jpg)
+![](https://github.com/simoskalfas/CIVU/blob/master/Images/Heatmap.png)
 
 The heatmap is made up of this kind of distributions (Arrival Time Distributions (ATDs)):
 
-![](https://github.com/simoskalfas/CIVU/blob/master/Images/ATD.jpg)
+![](https://github.com/simoskalfas/CIVU/blob/master/Images/ATD.png)
 
 The features of the heatmap are the experimental results that are analysed and presented. This analysis, however, is done very quantitatively, because the significant differences can be very slight and the meaning of each such deviation is speculative.
 
