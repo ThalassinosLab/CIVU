@@ -15,10 +15,10 @@ import utils
 import analyse
 import optimisation
 import time
-
+import argparse
 
 def deconvolve(filename, res_filename, smooth, mean_mode, title, xticks, 
-    ciu=True, cycles=3, print_res=True, aline=False):
+    ciu, cycles, aline, print_res=True,):
     """Handles deconvolution and result processing
 
     Works as a control center for the package, handling all processes and 
@@ -70,6 +70,7 @@ def deconvolve(filename, res_filename, smooth, mean_mode, title, xticks,
             norm_factor = 100 / max(intensities) #Scale factor for normalisation
             means = utils.find_means(intensities, arrival_time, mean_mode)  
             means.sort()
+            print 'Mean indices: ' + str(means)
             initial_sds = [0.01 for _ in range(len(means))]
             initial_heights = [intensities[i] for i in means]
             fitted_parameters_f, fit_f, fitted_parameters_r, fit_r = optimisation.run_opt_cycles(
@@ -108,15 +109,15 @@ def deconvolve(filename, res_filename, smooth, mean_mode, title, xticks,
                 #utils.plot_things is a versatile plotting function
                 utils.plot_things(arrival_time, [gausslist[erind]], filename, 
                     voltage, res_filename, title, ciu)
-            else: #Make dict output with parameters and error values
-                erlist = [error_f, error_r, error_av]
-                parlist = [fitted_parameters_f, fitted_parameters_r, average]
-                minind = erlist.index(min(erlist))
-                retdic[voltage] = []
-                retdic[voltage].append(means)
-                retdic[voltage].append(parlist[minind])
-                retdic[voltage].append(erlist[minind])
-                retdic[voltage].append([fit_f, fit_r, fit_av][minind])
+            # else: #Make dict output with parameters and error values
+            #     erlist = error
+            #     parlist = fitted_parameters_f
+            #     minind = erlist.index(min(erlist))
+            #     retdic[voltage] = []
+            #     retdic[voltage].append(means)
+            #     retdic[voltage].append(parlist[minind])
+            #     retdic[voltage].append(erlist[minind])
+            #     retdic[voltage].append([fit_f, fit_r, fit_av][minind])
         if print_res: #Return results concerning full CIU: area plot, FWHM plot
             analyse.results(f, av_error, areas, fwhms, datadic, results_dir, 
                 filename, res_filename, title, xticks)
@@ -128,24 +129,65 @@ def deconvolve(filename, res_filename, smooth, mean_mode, title, xticks,
 def main():
     #Start timer to measure time to completion
     start_time = time.time()
-    #Input filename of data file here without file extension
-    filename = 'Demo_data_3'
-    title = '_demo'
-    #Identifier for result file
-    res_filename = '_smoothed_3_2'
-    #Moving average smoothing in format: [window size, interval]. No smoothing 
-    #if left empty
-    smooth = [3, 2]
-    #Ticks for data on the area under the curve plot. Should correspond to the
-    #voltages of the ATDs in the dataset.
-    xticks = [0, 120, 240, 360] 
-    #Mode of mean determination: 'der' for second derivative, 'rel_max' for 
-    #relative maxima, [int, ..., int] for indices, [float, ..., float] for 
-    #numerical
-    means = 'der'
+    parser = argparse.ArgumentParser(description="""Gaussian deconvolution of 
+    	arrival time distributions.""")
+    parser.add_argument('filename', type=str, help="""Data file (.txt format). 
+    	Has to be in a folder named "Data" one level above the script.""")
+    parser.add_argument('title', type=str, help="""Additional title printed on 
+    	plots""")
+    parser.add_argument('mean_mode', help="""Mode of mean determination: \n
+  					'der' for automatic determination with second derivative 
+  					method, \n
+  					'rel_max' for relative maxima to be taken as the means, \n
+  					list of float for numerical means, \n
+  					list of integers for indices.""")
+    parser.add_argument('directory_label', type=str, help="""Label for results
+    	directory which will be created a level above the script""")
+    parser.add_argument('-s', '--smooth', default=[], type=list, metavar='',
+    	help="""[window size, interval]. If not included or empty there will be 
+    	no smoothing.""")
+    parser.add_argument('-x', '--xlabels', default=[], type=list, metavar='', 
+    	help="""Labels for x-axis of the area tracking plot (optional). Leave 
+    	empty no x-axis labels. Should be given as a list of numbers.""")
+    parser.add_argument('-c', '--not_ciu', action='store_true', 
+    	help="""Include if data is not CIU.""")
+    parser.add_argument('-r', '--repeats', default=5, type=int, metavar='', 
+    	help="""Number of recursions (depth of analysis). Default (recommended) 
+    	is 5.""")
+    parser.add_argument('-a', '--align', action='store_true',  
+    	help="""Include if the data should be aligned.""")
+    args = parser.parse_args()
+    # #Input filename of data file here without file extension
+    if (args.mean_mode)[0] != '[':
+		means = args.mean_mode
+    elif any([i for i in args.mean_mode if i =='.']):
+		means = [float(i) for i in args.mean_mode[1:-1].split(',')]	
+    else:
+		means = [int(i) for i in args.mean_mode[1:-1].split(',')]	
+    print means 
+    filename = args.filename[:-4]
+    title = args.title
+    # #Identifier for result file
+    res_filename = args.directory_label
+    # #Moving average smoothing in format: [window size, interval]. No smoothing 
+    # #if left empty
+    smooth = []
+    if args.smooth != smooth:
+    	smooth = [int(i) for i in args.smooth if unicode(i).isnumeric()]
+    # #Ticks for data on the area under the curve plot. Should correspond to the
+    # #voltages of the ATDs in the dataset.
+    xticks = [] 
+    if args.xlabels != xticks:
+    	xticks = [int(i) for i in args.xlabels if unicode(i).isnumeric()]
+    # #Mode of mean determination: 'der' for second derivative, 'rel_max' for 
+    # #relative maxima, [int, ..., int] for indices, [float, ..., float] for 
+    # #numerical
+    ciu = not args.not_ciu
+    cycles = args.repeats
+    aline = args.align
     #If analysing a CIU dataset change ciu to True and aline to False.
-    deconvolve(filename, res_filename, smooth, means, title, xticks, ciu=False, 
-        cycles=5, aline=True)
+    deconvolve(filename, res_filename, smooth, means, title, xticks, ciu, 
+        cycles, aline)
     print time.time() - start_time
     print 'full time elapsed'
 

@@ -127,22 +127,25 @@ def results(f, av_error, areas, fwhms, datadic, results_dir, filename,
     """
     av_error = np.average(av_error)
     f.write(str(av_error)) #Write average error to error log
-    fig2 = plt.figure() #Make area under the curve figure
-    ax2 = fig2.add_subplot(1, 1, 1)
-    areas = np.array(areas)
-    areas = np.transpose(areas)
-    colours = itertools.cycle(sns.color_palette('husl', len(areas)))
-    for i in range(len(areas)):
-        ax2.plot(np.sort([int(sorted(datadic)[j][:-1]) for j in range(
-                len(areas[i]))]), areas[i], color=colours.next(), label=i+1)
-    ax2.legend()
-    ax2.set_xlabel('Activation energy (V)')
-    ax2.set_ylabel('Percentage area under the curve')
-    ax2.set_xticks(xticks)
-    fig2.suptitle(title + ' population tracking')
-    fig2.savefig(results_dir + filename + res_filename + '_areas.png')
-    fig2.savefig(results_dir + filename + res_filename + '_areas.svg')
-    return
+    if all([True if len(i) == len(areas[0]) else False for i in areas]):
+        fig2 = plt.figure() #Make area under the curve figure
+        ax2 = fig2.add_subplot(1, 1, 1)
+        areas = np.array(areas)
+        areas = np.transpose(areas)
+        colours = itertools.cycle(sns.color_palette('husl', len(areas)))
+        for i in range(len(areas)):
+            ax2.plot(np.sort([int(sorted(datadic)[j][:-1]) for j in range(
+                    len(areas[i]))]), areas[i], color=colours.next(), label=i+1)
+        ax2.legend()
+        ax2.set_xlabel('Activation energy (V)')
+        ax2.set_ylabel('Percentage area under the curve')
+        ax2.set_xticks(xticks)
+        fig2.suptitle(title + ' population tracking')
+        fig2.savefig(results_dir + filename + res_filename + '_areas.png')
+        fig2.savefig(results_dir + filename + res_filename + '_areas.svg')
+        return
+    else:
+        return
 
 
 def main():

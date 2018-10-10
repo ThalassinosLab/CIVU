@@ -108,8 +108,8 @@ def plot_things(x, ylists, filename, voltage, ident, title, ciu):
     results_dir = os.path.join(script_dir, filename + ident + '/')
     if not os.path.isdir(results_dir):
         os.makedirs(results_dir)
-    fig.savefig(results_dir + filename + str(voltage) + '.png') 
-    fig.savefig(results_dir + filename + str(voltage) + '.svg') 
+    fig.savefig(results_dir + filename + '_' + str(voltage) + '.png') 
+    fig.savefig(results_dir + filename + '_' + str(voltage) + '.svg') 
     return
 
 
@@ -157,7 +157,7 @@ def mean_converter(means, arrival_times):
         times.sort()
         retl.append(times.index(i))
         times.pop(retl[-1])
-    print retl
+    #print retl
     return retl
 
 
