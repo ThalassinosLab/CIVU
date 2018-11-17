@@ -46,9 +46,10 @@ The package also expects a specific file architecture. The data file(s) have to 
 ## The Command Line Interface 
 
 The script should be run in the following fashion: 
-'''
-python Deconvolute_main.py <'datafile.txt'> <'plot title'> <mean determination> <'result label'> '''
-For more options run with '-h'
+```
+python Deconvolute_main.py <'datafile.txt'> <'plot title'> <mean determination> <'result label'> 
+```
+For more options run with `-h`
 
 The mean determination argument can take the following input:
 - 'der' for automatic mean estimation using the second derivative.
