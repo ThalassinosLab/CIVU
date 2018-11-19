@@ -80,9 +80,9 @@ Returns:
     for i in range(len(average)):
         gausslist[0].append(utils.gaussian(arrival_time, *average[i]))
     #Get sum of fitted peaks to compare to ATD curve
-    fit_av = list(np.zeros((200)))
-    fit_f = list(np.zeros((200)))
-    fit_r = list(np.zeros((200)))
+    fit_av = list(np.zeros((len(intensities))))
+    fit_f = list(np.zeros((len(intensities))))
+    fit_r = list(np.zeros((len(intensities))))
     for i in gausslist[0]:
         fit_av = map(add, fit_av, i)
     for i in gausslist[1]:
