@@ -14,6 +14,8 @@ import seaborn as sns
 import itertools
 import os
 import math
+import re
+
 
 
 def rmsd(predicted, actual):
@@ -192,6 +194,15 @@ def find_means(data, xvals, mode):
         means = argrelmax(np.array(data), order=1)[0]
         return means
 
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
+def natural_keys(text):
+    '''
+    alist.sort(key=natural_keys) sorts in human order
+    http://nedbatchelder.com/blog/200712/human_sorting.html
+    '''
+    return [ atoi(c) for c in re.split('(\d+)', text) ]
 
 def main():
     return

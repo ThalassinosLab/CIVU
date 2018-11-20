@@ -8,6 +8,21 @@ Created by Simos Kalfas
 from scipy.signal import  argrelmax
 import numpy as np
 
+
+# def handle_file(filename):
+#     datdic = {}
+#     with open('../Data/' + filename + '.txt', 'r') as f:
+#         datdic[filename] = []
+#         datdic['data'] = []
+#         f.readline()
+#         for line in f:
+#             spl = line.replace('\r', '')
+#             spl = spl.replace('\n', '')
+#             spl = spl.split('\t')
+#             datdic[filename].append(float(spl[0]))
+#             datdic['data'].append(float(spl[1]))
+#     return datdic
+
 def handle_file(filename, make_txt=False):
     """Parses the data file into a dictionary.
 
@@ -25,8 +40,9 @@ def handle_file(filename, make_txt=False):
         fl = fl.replace('\r', '')
         fl = fl.replace('\n', '')
         fl = fl.split('\t')
-        for i in fl:
-            datdic[str(i)] = []
+        fl[0] = filename
+        for i in range(len(fl)):
+            datdic[str(fl[i])] = []
         for line in f:
             spl = line.replace('\r', '')
             spl = spl.replace('\n', '')

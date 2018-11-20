@@ -16,6 +16,7 @@ import analyse
 import optimisation
 import time
 import argparse
+import re
 
 def deconvolve(filename, res_filename, smooth, mean_mode, title, xticks, 
     ciu, cycles, aline, print_res=True,):
@@ -61,7 +62,7 @@ def deconvolve(filename, res_filename, smooth, mean_mode, title, xticks,
     #Create error log file
     with open(results_dir + filename + res_filename + '_errorlog_' + str(cycles) 
             + '.txt', 'w') as f:
-        for key in sorted(datadic): #Loop over ATDs
+        for key in sorted(datadic, key=utils.natural_keys): #Loop over ATDs
             voltage = key
             if voltage == filename: #Exclude arrival times
                 continue
@@ -146,7 +147,7 @@ def main():
     parser.add_argument('-s', '--smooth', default=[], type=list, metavar='',
     	help="""[window size, interval]. If not included or empty there will be 
     	no smoothing.""")
-    parser.add_argument('-x', '--xlabels', default=[], type=list, metavar='', 
+    parser.add_argument('-x', '--xlabels', default=[], type=str, metavar='', 
     	help="""Labels for x-axis of the area tracking plot (optional). Leave 
     	empty no x-axis labels. Should be given as a list of numbers.""")
     parser.add_argument('-c', '--not_ciu', action='store_true', 
@@ -178,7 +179,10 @@ def main():
     # #voltages of the ATDs in the dataset.
     xticks = [] 
     if args.xlabels != xticks:
-    	xticks = [int(i) for i in args.xlabels if unicode(i).isnumeric()]
+    	#xticks = [int(i) for i in args.xlabels if unicode(i).isnumeric()]
+        xticks = args.xlabels
+        xticks = xticks.split(',')
+        xticks = [int(re.sub("[^0-9]", "", i)) for i in xticks]
     # #Mode of mean determination: 'der' for second derivative, 'rel_max' for 
     # #relative maxima, [int, ..., int] for indices, [float, ..., float] for 
     # #numerical
