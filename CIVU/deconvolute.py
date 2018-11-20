@@ -19,7 +19,7 @@ import argparse
 import re
 
 def deconvolve(filename, res_filename, smooth, mean_mode, title, xticks, 
-    ciu, cycles, aline, print_res=True,):
+    ciu, cycles, aline, indiv_areas, print_res=True,):
     """Handles deconvolution and result processing
 
     Works as a control center for the package, handling all processes and 
@@ -89,6 +89,8 @@ def deconvolve(filename, res_filename, smooth, mean_mode, title, xticks,
             for i in range(len(gausslist[erind]) - 2):
                 areacur.append(((utils.auc(gausslist[erind][i], arrival_time) * 
                     norm_factor) / total_area) * 100)
+            if len(datadic) == 2 or indiv_areas:
+                utils.indiv_area_plot(areacur, filename, results_dir, title, voltage)
             #For full width half maximum plot
             for i in range(len(gausslist[erind]) - 2):
                 fwhmcur.append(utils.fwhm(gausslist[erind][i][2]))
@@ -157,6 +159,9 @@ def main():
     	is 5.""")
     parser.add_argument('-a', '--align', action='store_true',  
     	help="""Include if the data should be aligned.""")
+    parser.add_argument('-i', '--areas', action='store_true',  
+        help="""Include to output bar charts area percentage of individual 
+        ATDs.""")
     args = parser.parse_args()
     # #Input filename of data file here without file extension
     if (args.mean_mode)[0] != '[':
@@ -189,9 +194,10 @@ def main():
     ciu = not args.not_ciu
     cycles = args.repeats
     aline = args.align
+    indiv_areas = args.areas
     #If analysing a CIU dataset change ciu to True and aline to False.
     deconvolve(filename, res_filename, smooth, means, title, xticks, ciu, 
-        cycles, aline)
+        cycles, aline, indiv_areas)
     print time.time() - start_time
     print 'full time elapsed'
 

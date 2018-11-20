@@ -204,6 +204,20 @@ def natural_keys(text):
     '''
     return [ atoi(c) for c in re.split('(\d+)', text) ]
 
+def indiv_area_plot(areas, filename, results_dir, title, voltage):
+    colours = itertools.cycle(sns.color_palette('husl', len(areas)))
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    ax.bar(np.linspace(1, len(areas), len(areas)), areas, color=[colours.next() for _ in range(len(areas))], width=0.3)
+    ax.legend()
+    ax.set_xlabel('Population')
+    ax.set_ylabel('Percentage area under the curve')
+    ax.set_xticks(np.linspace(1, len(areas), len(areas)))
+    fig.suptitle(title + ' population relative abundance')
+    fig.savefig(results_dir + filename + '_' + str(voltage) + 'individual areas' + '.png') 
+    fig.savefig(results_dir + filename + '_' + str(voltage) + 'individual areas' + '.svg')
+    return
+
 def main():
     return
 
